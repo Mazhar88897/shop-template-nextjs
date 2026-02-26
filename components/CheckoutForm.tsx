@@ -50,8 +50,7 @@ export default function CheckoutForm({
     <form onSubmit={handleSubmit} className='space-y-6'>
       <PaymentElement
         options={{
-          layout: 'accordion',
-          paymentMethodOrder: ['card', 'google_pay', 'apple_pay']
+          layout: 'tabs'
         }}
       />
 
