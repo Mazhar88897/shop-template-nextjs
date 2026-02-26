@@ -6,14 +6,6 @@ import StripeProvider from '@/components/StripeProvider'
 import CouponInput from '@/components/CouponInput'
 import CheckoutForm from '@/components/CheckoutForm'
 
-interface OrderData {
-  orderId: string
-  clientSecret: string
-  totalAmount: string
-  customerEmail: string
-  customerFullName: string
-}
-
 function PaymentContent() {
   const searchParams = useSearchParams()
   const clientSecret = searchParams.get('clientSecret')
