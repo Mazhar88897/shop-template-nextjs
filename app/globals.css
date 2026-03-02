@@ -45,3 +45,11 @@ body {
 .rich-text-editor .ql-editor.ql-blank::before {
   color: rgba(148, 163, 184, 0.8);
 }
+
+/* Light theme: black text for readability */
+.rich-text-editor-light .ql-editor {
+  color: #18181b !important;
+}
+.rich-text-editor-light .ql-editor.ql-blank::before {
+  color: #71717a !important;
+}
