@@ -113,7 +113,7 @@ export default function BlogPostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-white font-sans overflow-x-hidden">
       <main className="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-10 sm:px-6 lg:px-8">
         <Link
           href="/blogs"
@@ -197,7 +197,7 @@ export default function BlogPostPage() {
         </section>
 
         {/* Article body: HTML description */}
-        <article className="space-y-6">
+        <article className="space-y-6 ">
           {blog.description?.trim() ? (
             <div
               className="prose prose-zinc max-w-none text-sm leading-relaxed text-zinc-700 sm:text-[15px] prose-p:my-3 prose-headings:font-semibold prose-headings:text-zinc-900 prose-a:text-[#5b4de6] prose-a:no-underline hover:prose-a:underline prose-ul:my-3 prose-li:my-0.5"
