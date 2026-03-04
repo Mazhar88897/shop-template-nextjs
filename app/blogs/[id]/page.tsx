@@ -113,8 +113,8 @@ export default function BlogPostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans overflow-x-hidden">
-      <main className="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-10 sm:px-6 lg:px-8">
+    <div className="min-h-screen min-w-0 bg-white font-sans overflow-x-hidden">
+      <main className="mx-auto flex min-w-0 max-w-5xl flex-col gap-10 px-4 py-10 sm:px-6 lg:px-8">
         <Link
           href="/blogs"
           className="inline-flex w-fit items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900"
@@ -197,10 +197,11 @@ export default function BlogPostPage() {
         </section>
 
         {/* Article body: HTML description */}
-        <article className="space-y-6 ">
+        <article className="min-w-0 max-w-full space-y-6">
           {blog.description?.trim() ? (
             <div
-              className="prose prose-zinc max-w-none text-sm leading-relaxed text-zinc-700 sm:text-[15px] prose-p:my-3 prose-headings:font-semibold prose-headings:text-zinc-900 prose-a:text-[#5b4de6] prose-a:no-underline hover:prose-a:underline prose-ul:my-3 prose-li:my-0.5"
+              className="prose prose-zinc max-w-none text-sm leading-relaxed text-zinc-700 sm:text-[15px] prose-p:my-3 prose-headings:font-semibold prose-headings:text-zinc-900 prose-a:text-[#5b4de6] prose-a:no-underline hover:prose-a:underline prose-ul:my-3 prose-li:my-0.5 break-words"
+              style={{ overflowWrap: "break-word" }}
               dangerouslySetInnerHTML={{ __html: blog.description }}
             />
           ) : (
