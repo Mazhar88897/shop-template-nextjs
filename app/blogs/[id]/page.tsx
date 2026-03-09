@@ -200,8 +200,8 @@ export default function BlogPostPage() {
         <article className="min-w-0 max-w-full space-y-6">
           {blog.description?.trim() ? (
             <div
-              className="prose prose-zinc max-w-none text-sm leading-relaxed text-zinc-700 sm:text-[15px] prose-p:my-3 prose-headings:font-semibold prose-headings:text-zinc-900 prose-a:text-[#5b4de6] prose-a:no-underline hover:prose-a:underline prose-ul:my-3 prose-li:my-0.5 break-words"
-              style={{ overflowWrap: "break-word" }}
+              className="prose prose-zinc max-w-none text-sm leading-relaxed text-zinc-700 sm:text-[15px] prose-p:my-3 prose-headings:font-semibold prose-headings:text-zinc-900 prose-a:text-[#5b4de6] prose-a:no-underline hover:prose-a:underline prose-ul:my-3 prose-li:my-0.5"
+              style={{ wordBreak: "normal", overflowWrap: "break-word", hyphens: "none" }}
               dangerouslySetInnerHTML={{ __html: blog.description }}
             />
           ) : (

@@ -17,8 +17,8 @@ export default function CheckoutPage() {
   const router = useRouter()
   const { cart } = useCart()
 
-  const [fullName, setFullName] = useState('Huzaifa Naseer Khan')
-  const [email, setEmail] = useState('huzaifanaseerkhan02@gmail.com')
+  const [fullName, setFullName] = useState('Mazhar Khan')
+  const [email, setEmail] = useState('mk0906145@gmail.com')
   const [phone, setPhone] = useState('03365534285')
   const [address, setAddress] = useState('123 Main St')
   const [isSubmitting, setIsSubmitting] = useState(false)

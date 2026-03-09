@@ -3,6 +3,7 @@
 import { redirect, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useCart } from '@/context/CartContext'
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE ??
@@ -24,6 +25,7 @@ function SuccessContent() {
   const [order, setOrder] = useState<OrderStatus | null>(null)
   const [loading, setLoading] = useState(true)
   const [shouldRedirectToFailed, setShouldRedirectToFailed] = useState(false)
+  const { clearCart } = useCart()
 
   useEffect(() => {
     // If Stripe says the redirect_status is not succeeded, go to failure page
@@ -60,6 +62,13 @@ function SuccessContent() {
 
     fetchOrder()
   }, [orderId, redirectStatus])
+
+  // Clear cart when payment is confirmed successful
+  useEffect(() => {
+    if (order && !loading && !shouldRedirectToFailed) {
+      clearCart()
+    }
+  }, [order, loading, shouldRedirectToFailed, clearCart])
 
   useEffect(() => {
     if (shouldRedirectToFailed) {
