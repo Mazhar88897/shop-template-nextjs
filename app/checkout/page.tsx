@@ -87,7 +87,7 @@ export default function CheckoutPage() {
 
   if (!hasItems) {
     return (
-      <div className='min-h-screen bg-[#f5f0e8] font-sans'>
+      <div className='min-h-screen font-sans'>
         <div className='mx-auto flex max-w-3xl flex-col items-center justify-center px-4 py-20 text-center'>
           <h1 className='text-2xl font-semibold text-[#374431]'>
             Your cart is empty
@@ -107,7 +107,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className='min-h-screen bg-[#f5f0e8] font-sans'>
+    <div className='min-h-screen bg-white font-sans'>
       <div className='mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8'>
         <div className='mb-6 flex items-center justify-between gap-4'>
           <div>

@@ -96,7 +96,7 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f5f0e8] font-sans">
+      <div className="min-h-screen font-sans">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-center gap-6 px-4 py-20 sm:px-6 lg:px-8">
           <Loader2 className="h-10 w-10 animate-spin text-[#374431]" />
           <p className="text-sm text-zinc-500">Loading…</p>
@@ -107,7 +107,7 @@ export default function ProductDetailPage() {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-[#f5f0e8] font-sans">
+      <div className="min-h-screen font-sans">
         <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
           <Link
             href="/shop"
@@ -125,7 +125,7 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="min-h-screen min-w-0 max-w-full overflow-x-hidden bg-[#f5f0e8] font-sans">
+    <div className="min-h-screen min-w-0 max-w-full overflow-x-hidden font-sans">
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <Link
           href="/shop"
@@ -137,13 +137,13 @@ export default function ProductDetailPage() {
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_1fr] lg:gap-12">
           {/* Image */}
-          <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-[#e8dcd2] bg-[#e5e2dc]">
+          <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-[#e8dcd2] py-3">
             {product.imageUrl ? (
               <Image
                 src={product.imageUrl}
                 alt={product.name}
                 fill
-                className="object-cover"
+                className="object-contain"
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 unoptimized
                 priority

@@ -92,7 +92,7 @@ export default function ShopPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f5f0e8] font-sans">
+      <div className="min-h-screen font-sans">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center py-20">
             <Loader2 className="h-10 w-10 animate-spin text-[#374431]" />
@@ -104,7 +104,7 @@ export default function ShopPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#f5f0e8] font-sans">
+      <div className="min-h-screen font-sans">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
@@ -115,7 +115,7 @@ export default function ShopPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f0e8] font-sans">
+    <div className="min-h-screen  font-sans">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header: Sort + Total */}
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
@@ -191,8 +191,9 @@ export default function ShopPage() {
                         src={product.imageUrl}
                         alt={product.name}
                         fill
-                        className="object-cover object-center transition group-hover:scale-[1.02]"
-                        sizes="(max-width: 600px) 75vw, (max-width: 900px) 38vw, 18vw"
+                        className="object-contain"
+                        // className="object-cover object-center transition group-hover:scale-[1.02]"
+                        // sizes="(max-width: 600px) 75vw, (max-width: 900px) 38vw, 18vw"
                         unoptimized
                       />
                     ) : (

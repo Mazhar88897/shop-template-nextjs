@@ -1,4 +1,4 @@
-/* Blogs index page – fetches from API and shows card list with pagination */
+/* Blogs index – vertical layout: featured post, scroll list, categories sidebar */
 "use client";
 
 import Image from "next/image";
@@ -9,8 +9,6 @@ import { Loader2 } from "lucide-react";
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE ??
   "https://shop-template-backend-nine.vercel.app";
-
-const POSTS_PER_PAGE = 16;
 
 type BlogLink = { id?: string; name: string; url: string };
 type BlogExtras = { tags: string[]; readTime: string };
@@ -28,6 +26,17 @@ type Blog = {
   updatedAt?: string;
 };
 
+function decodeHtmlEntities(str: string): string {
+  return str
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&apos;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&#x27;/g, "'");
+}
+
 function stripHtmlToText(html: string, maxLength = 120): string {
   if (!html?.trim()) return "";
   const text = html
@@ -35,11 +44,12 @@ function stripHtmlToText(html: string, maxLength = 120): string {
     .replace(/&nbsp;/g, " ")
     .replace(/\s+/g, " ")
     .trim();
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength).trim() + "…";
+  const decoded = decodeHtmlEntities(text);
+  if (decoded.length <= maxLength) return decoded;
+  return decoded.slice(0, maxLength).trim() + "…";
 }
 
-function formatDate(iso?: string): string {
+function formatDateShort(iso?: string): string {
   if (!iso) return "";
   try {
     const d = new Date(iso);
@@ -53,11 +63,19 @@ function formatDate(iso?: string): string {
   }
 }
 
+const DEFAULT_CATEGORIES = [
+  "Interviews",
+  "Inspiration",
+  "Process",
+  "Updates",
+  "Community",
+];
+
 export default function BlogsPage() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchBlogs() {
@@ -83,23 +101,40 @@ export default function BlogsPage() {
     fetchBlogs();
   }, []);
 
-  const totalPages = useMemo(
-    () => Math.max(1, Math.ceil(blogs.length / POSTS_PER_PAGE)),
-    [blogs.length]
-  );
+  const sortedBlogs = useMemo(() => {
+    const list = [...blogs].sort((a, b) => {
+      const ta = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const tb = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return tb - ta;
+    });
+    return list;
+  }, [blogs]);
 
-  const paginatedPosts = useMemo(() => {
-    const start = (currentPage - 1) * POSTS_PER_PAGE;
-    return blogs.slice(start, start + POSTS_PER_PAGE);
-  }, [blogs, currentPage]);
+  const categories = useMemo(() => {
+    const fromTags = new Set<string>();
+    sortedBlogs.forEach((b) => {
+      (b.extras?.tags || []).forEach((t) => fromTags.add(t.trim()));
+    });
+    const combined = new Set([...DEFAULT_CATEGORIES, ...fromTags]);
+    return Array.from(combined).filter(Boolean).sort((a, b) => a.localeCompare(b));
+  }, [sortedBlogs]);
+
+  const filteredBlogs = useMemo(() => {
+    if (!selectedCategory) return sortedBlogs;
+    return sortedBlogs.filter((b) =>
+      (b.extras?.tags || []).some(
+        (t) => t.trim().toLowerCase() === selectedCategory.toLowerCase()
+      )
+    );
+  }, [sortedBlogs, selectedCategory]);
+
+  const featuredPost = filteredBlogs[0] ?? null;
+  const olderPosts = filteredBlogs.slice(1);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-white font-sans">
         <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <h1 className="mb-8 text-2xl font-semibold tracking-tight text-zinc-900">
-            Latest from the blog
-          </h1>
           <div className="flex items-center justify-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-zinc-500" />
           </div>
@@ -112,9 +147,6 @@ export default function BlogsPage() {
     return (
       <div className="min-h-screen bg-white font-sans">
         <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <h1 className="mb-8 text-2xl font-semibold tracking-tight text-zinc-900">
-            Latest from the blog
-          </h1>
           <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
           </p>
@@ -125,122 +157,136 @@ export default function BlogsPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans">
-      <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <h1 className="mb-8 text-2xl font-semibold tracking-tight text-zinc-900">
-          Latest from the blog
-        </h1>
-
-        {blogs.length === 0 ? (
-          <div className="rounded-xl border border-[#e8dcd2] bg-zinc-50/50 p-12 text-center">
-            <p className="text-sm text-zinc-600">No blog posts yet.</p>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-              {paginatedPosts.map((post) => (
-                <Link
-                  key={post.id}
-                  href={`/blogs/${post.id}`}
-                  className="block h-full"
-                >
-                  <article className="flex h-full flex-col border-b border-[#e8dcd2] bg-white pb-6  transition hover:-translate-y-1 hover:shadow-md">
-                    <div className="px-5 pt-5">
-                      <p className="mb-1 text-xs font-semibold tracking-[0.15em] text-zinc-500">
-                        {formatDate(post.createdAt) ||
-                          (post.extras?.readTime
-                            ? post.extras.readTime
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-10 lg:flex-row lg:gap-12">
+          {/* Main column: vertical feed */}
+          <div className="min-w-0 flex-1">
+            {blogs.length === 0 ? (
+              <div className="rounded-xl border border-[#e8dcd2] bg-zinc-50/50 p-12 text-center">
+                <p className="text-sm text-zinc-600">No blog posts yet.</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-10">
+                {/* Featured: most recent post – prominent */}
+                {featuredPost && (
+                  <article className="border-b border-[#e8dcd2] pb-10">
+                    <Link href={`/blogs/${featuredPost.id}`} className="block">
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">
+                        {formatDateShort(featuredPost.createdAt) ||
+                          (featuredPost.extras?.readTime
+                            ? featuredPost.extras.readTime
                             : "")}
                       </p>
-                      <div className="mb-2 flex items-start gap-2">
-                        <h2 className="text-base font-semibold leading-snug text-zinc-900">
-                          {post.title}
-                        </h2>
+                      <h2 className="mb-4 text-2xl font-semibold leading-tight text-zinc-900 sm:text-3xl">
+                        {featuredPost.title}
+                      </h2>
+                      <div className="relative aspect-[16/8] w-full overflow-hidden rounded-xl ">
+                        {featuredPost.imageUrl ? (
+                          <Image
+                            src={featuredPost.imageUrl}
+                            alt={featuredPost.title}
+                            fill
+                            sizes="(max-width: 824px) 30vw, 40vw"
+                            className="object-contain object-center"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-zinc-400 text-sm">
+                            No image
+                          </div>
+                        )}
                       </div>
-                      {post.author && (
-                        <p className="text-xs text-zinc-500">
-                          By {post.author}
-                          {post.extras?.readTime && ` · ${post.extras.readTime}`}
+                      <p className="mt-4 max-w-2xl text-sm leading-relaxed text-zinc-600 sm:text-base">
+                        {stripHtmlToText(featuredPost.description, 220)}
+                      </p>
+                      {featuredPost.author && (
+                        <p className="mt-2 text-xs text-zinc-500">
+                          By {featuredPost.author}
                         </p>
                       )}
-                    </div>
-                    <div className="relative mb-4 mt-2 h-48 w-full overflow-hidden">
-                      {post.imageUrl ? (
-                        <Image
-                          src={post.imageUrl}
-                          alt={post.title}
-                          fill
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                          className="object-cover object-center"
-                          unoptimized
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center bg-zinc-100 text-zinc-400">
-                          <span className="text-sm">No image</span>
-                        </div>
-                      )}
-                    </div>
-                    <p className="mt-auto px-5 text-sm leading-relaxed text-zinc-600 line-clamp-3">
-                      {stripHtmlToText(post.description)}
-                    </p>
+                    </Link>
                   </article>
-                </Link>
-              ))}
-            </div>
+                )}
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-10 flex w-full flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setCurrentPage((p) => Math.max(1, p - 1))
-                    }
-                    disabled={currentPage <= 1}
-                    className="rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-1.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 disabled:opacity-40 disabled:hover:bg-zinc-50"
-                  >
-                    Previous
-                  </button>
-                  {Array.from(
-                    { length: totalPages },
-                    (_, i) => i + 1
-                  ).map((page) => (
-                    <button
-                      key={page}
-                      type="button"
-                      onClick={() => setCurrentPage(page)}
-                      className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-                        currentPage === page
-                          ? "bg-zinc-900 text-white shadow-sm"
-                          : "border border-zinc-300 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
-                      }`}
+                {/* Older posts: scroll down – compact list */}
+                <div className="flex flex-col gap-8">
+                  {olderPosts.map((post) => (
+                    <Link
+                      key={post.id}
+                      href={`/blogs/${post.id}`}
+                      className="group flex gap-4 border-b border-[#e8dcd2] pb-8 last:border-0"
                     >
-                      {page}
-                    </button>
+                      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-zinc-100 sm:h-28 sm:w-28">
+                        {post.imageUrl ? (
+                          <Image
+                            src={post.imageUrl}
+                            alt={post.title}
+                            fill
+                            sizes="112px"
+                            className="object-cover object-center transition group-hover:scale-105"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-zinc-400 text-xs">
+                            No image
+                          </div>
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-500">
+                          {formatDateShort(post.createdAt) ||
+                            (post.extras?.readTime ? post.extras.readTime : "")}
+                        </p>
+                        <h3 className="mb-1.5 font-semibold leading-snug text-zinc-900 group-hover:text-zinc-700">
+                          {post.title}
+                        </h3>
+                        <p className="line-clamp-2 text-sm text-zinc-600">
+                          {stripHtmlToText(post.description, 100)}
+                        </p>
+                      </div>
+                    </Link>
                   ))}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setCurrentPage((p) => Math.min(totalPages, p + 1))
-                    }
-                    disabled={currentPage >= totalPages}
-                    className="rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-1.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 disabled:opacity-40 disabled:hover:bg-zinc-50"
-                  >
-                    Next
-                  </button>
                 </div>
-                <p className="text-xs text-zinc-500">
-                  Showing {(currentPage - 1) * POSTS_PER_PAGE + 1}–
-                  {Math.min(
-                    currentPage * POSTS_PER_PAGE,
-                    blogs.length
-                  )}{" "}
-                  of {blogs.length} posts
-                </p>
               </div>
             )}
-          </>
-        )}
+          </div>
+
+          {/* Right: Categories panel */}
+          <aside className="w-full hidden lg:block shrink-0 lg:w-56 xl:w-64">
+            <div className="sticky top-24 rounded-xl border border-[#e8dcd2] bg-zinc-50/50 p-5">
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">
+                All Categories
+              </h3>
+              <nav className="flex flex-col gap-1">
+                <button
+                  type="button"
+                  onClick={() => setSelectedCategory(null)}
+                  className={`text-left text-sm font-medium transition hover:text-zinc-900 ${
+                    selectedCategory === null
+                      ? "text-zinc-900"
+                      : "text-zinc-600"
+                  }`}
+                >
+                  All
+                </button>
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() =>
+                      setSelectedCategory((c) => (c === cat ? null : cat))
+                    }
+                    className={`text-left text-sm font-medium transition hover:text-zinc-900 ${
+                      selectedCategory === cat ? "text-zinc-900" : "text-zinc-600"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </nav>
+            </div>
+          </aside>
+        </div>
       </main>
     </div>
   );

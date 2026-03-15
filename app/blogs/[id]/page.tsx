@@ -133,7 +133,7 @@ export default function BlogPostPage() {
                     src={blog.imageUrl}
                     alt={blog.title}
                     fill
-                    className="object-cover"
+                   className="object-contain object-center"
                     sizes="(max-width: 1024px) 100vw, 60vw"
                     unoptimized
                   />
