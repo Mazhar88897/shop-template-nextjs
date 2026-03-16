@@ -219,7 +219,6 @@ export default function AdminBlogCreatePage() {
               onChange={(v) => setForm((f) => ({ ...f, description: v }))}
               placeholder="Write your blog description…"
               className="[&_.ql-editor]:min-h-[220px]"
-              theme="light"
             />
           </div>
 
