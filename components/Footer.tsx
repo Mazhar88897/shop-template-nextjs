@@ -13,15 +13,19 @@ export default function Footer() {
         <div className="mb-6 flex justify-center">
           <Link
             href="/"
-            className="font-semibold text-zinc-900 hover:text-zinc-700"
-            style={{ fontFamily: "Georgia, serif", fontSize: "1.5rem" }}
+            className="text-2xl text-zinc-900 hover:text-zinc-700"
+            style={{
+              fontFamily: '"Pacifico", cursive',
+              fontWeight: 400,
+              fontStyle: "normal",
+            }}
           >
-            Dribbble
+            Seriously Unserious
           </Link>
         </div>
 
         {/* Upper nav links */}
-        <nav className="mb-1 flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm text-zinc-700">
+        {/* <nav className="mb-1 flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm text-zinc-700">
           <Link href="/" className="hover:text-zinc-900">
             For designers
           </Link>
@@ -34,10 +38,10 @@ export default function Footer() {
           <Link href="/" className="hover:text-zinc-900">
             Advertising
           </Link>
-        </nav>
+        </nav> */}
 
         {/* Lower nav links */}
-        <nav className="mb-8 flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm text-zinc-700">
+        {/* <nav className="mb-8 flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm text-zinc-700">
           <Link href="/blogs" className="hover:text-zinc-900">
             Blog
           </Link>
@@ -50,7 +54,7 @@ export default function Footer() {
           <Link href="/" className="hover:text-zinc-900">
             Support
           </Link>
-        </nav>
+        </nav> */}
 
         {/* Social icons – centered */}
         <div className="mb-4 flex items-center justify-center gap-6">
@@ -102,7 +106,7 @@ export default function Footer() {
 
         {/* Copyright & legal – left aligned, lighter gray */}
         <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-1 text-left text-sm text-zinc-500">
-          <span>© {currentYear} Dribbble</span>
+          <span>© {currentYear} Seriously Unserious</span>
           <Link href="/terms" className="hover:text-zinc-700">
             Terms
           </Link>

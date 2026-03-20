@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
-import { ShoppingBag, ChevronLeft, ChevronRight, ChevronDown, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown, Loader2, ShoppingBag } from "lucide-react";
+import { useCart } from "@/context/CartContext";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE ??
@@ -40,6 +41,7 @@ export default function ShopPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSort, setSelectedSort] = useState("recommended");
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const { totalItems, openCart } = useCart();
 
   useEffect(() => {
     async function fetchProducts() {
@@ -121,16 +123,16 @@ export default function ShopPage() {
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="text-sm font-medium text-[#374431]">Sort By</span>
-            <div className="relative inline-block text-sm text-[#374431]">
+            <div className="relative text-sm text-[#374431]">
               <button
                 type="button"
                 onClick={() => setIsSortOpen((open) => !open)}
-                className="inline-flex items-center rounded-full bg-[#e1d7c4] px-3 py-1.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#374431]"
+                className="inline-flex items-center rounded-full bg-[#e1d7c4] px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#374431]"
                 aria-haspopup="listbox"
                 aria-expanded={isSortOpen}
               >
                 <ChevronDown
-                  className={`mr-2 h-4 w-4 text-[#374431] transition-transform ${
+                  className={`mr-2 h-4 w-4 shrink-0 text-[#374431] transition-transform ${
                     isSortOpen ? "rotate-180" : ""
                   }`}
                 />
@@ -140,14 +142,14 @@ export default function ShopPage() {
               </button>
               {isSortOpen && (
                 <div
-                  className="absolute left-0 top-full z-10 mt-1 w-full rounded-3xl bg-[#e1d7c4] py-1 shadow-lg"
+                  className="absolute left-0 top-full z-10 mt-1 min-w-[200px] rounded-xl bg-[#e1d7c4] py-1 shadow-lg"
                   onMouseLeave={() => setIsSortOpen(false)}
                 >
                   {SORT_OPTIONS.map((option) => (
                     <button
                       key={option.value}
                       type="button"
-                      className={`flex w-full items-center px-4 py-1.5 text-left text-sm ${
+                      className={`flex w-full items-center px-4 py-2 text-left text-sm ${
                         option.value === selectedSort
                           ? "font-semibold text-[#1f2a1a]"
                           : "text-[#374431] hover:bg-[#d4c9b7]"
@@ -164,9 +166,24 @@ export default function ShopPage() {
               )}
             </div>
           </div>
-          <p className="text-sm text-zinc-600">
-            Total {sortedProducts.length} Items
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="text-sm text-zinc-600">
+              Total {sortedProducts.length} Items
+            </p>
+            <button
+              type="button"
+              onClick={openCart}
+              className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#1a1a1a] hover:opacity-70"
+              aria-label={`Cart, ${totalItems} items`}
+            >
+              <ShoppingBag className="h-5 w-5" />
+              {totalItems > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#1a1a1a] px-1 text-[10px] font-medium text-white">
+                  {totalItems > 99 ? "99+" : totalItems}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
 
         {products.length === 0 ? (

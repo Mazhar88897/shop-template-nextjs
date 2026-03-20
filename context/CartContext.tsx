@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -24,6 +25,9 @@ type Cart = {
 type CartContextValue = {
   cart: Cart;
   totalItems: number;
+  isCartOpen: boolean;
+  openCart: () => void;
+  closeCart: () => void;
   addItem: (
     productId: string,
     quantity?: number,
@@ -41,7 +45,10 @@ const STORAGE_KEY = "shop-cart";
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<Cart>({ items: [] });
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
+  const openCart = useCallback(() => setIsCartOpen(true), []);
+  const closeCart = useCallback(() => setIsCartOpen(false), []);
 
   useEffect(() => {
     try {
@@ -141,13 +148,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return {
       cart,
       totalItems,
+      isCartOpen,
+      openCart,
+      closeCart,
       addItem,
       updateQuantity,
       removeItem,
       clearCart,
       getQuantity,
     };
-  }, [cart]);
+  }, [cart, isCartOpen, openCart, closeCart]);
 
   if (!isHydrated) {
     return <>{children}</>;
@@ -164,6 +174,9 @@ export function useCart(): CartContextValue {
     return {
       cart: { items: [] },
       totalItems: 0,
+      isCartOpen: false,
+      openCart: () => {},
+      closeCart: () => {},
       addItem: () => {},
       updateQuantity: () => {},
       removeItem: () => {},

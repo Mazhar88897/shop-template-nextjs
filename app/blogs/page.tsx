@@ -251,13 +251,20 @@ export default function BlogsPage() {
             )}
           </div>
 
-          {/* Right: Categories panel */}
+          {/* Right: Categories panel – clean vertical list */}
           <aside className="w-full hidden lg:block shrink-0 lg:w-56 xl:w-64">
-            <div className="sticky top-24 rounded-xl border border-[#e8dcd2] bg-zinc-50/50 p-5">
-              <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">
+            <div className="sticky top-24">
+              <div className="mb-4">
+                <h2 className="text-base font-bold text-zinc-900">Blog</h2>
+                <p className="text-sm text-zinc-500 font-normal">
+                  Insights &amp; stories
+                </p>
+              </div>
+              <div className="my-6 border-t border-zinc-200" />
+              <h3 className="mb-4 text-sm font-bold text-zinc-900">
                 All Categories
               </h3>
-              <nav className="flex flex-col gap-1">
+              <nav className="flex flex-col ">
                 <button
                   type="button"
                   onClick={() => setSelectedCategory(null)}
